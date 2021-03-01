@@ -100,7 +100,7 @@ class Mall(object):
             self.edge = self.profit/self.volume
             self.RTP = 1 - self.edge
             self.updated = True
-            self.update_externality(house_action, house_random_action, self.player_in_mall)
+            # self.update_externality(house_action, house_random_action, self.player_in_mall)
             return None
         else:
             print("This mall has been updated during this interval. One should execute player_betting for going into the next interval.")
