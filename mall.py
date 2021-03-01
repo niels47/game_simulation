@@ -126,20 +126,20 @@ class Mall(object):
         self.player_in_mall = [Player(n_action) for _ in range(self.n_players)]
         if not self.updated and self.interval == -1:
             self.interval = self.interval + 1  # Note the interval will go to next only if the method player_betting executed
-            self.player_action_ls = [x.action for x in self.player_in_mall]
+            # self.player_action_ls = [x.action for x in self.player_in_mall]
             self.player_bet_ls = [x.bet for x in self.player_in_mall]
-            self.player_odd_ls = [x.odd for x in self.player_in_mall]
-            self.player_Bernoulli_p_ls = [x.Bernoulli_p for x in self.player_in_mall]
+            # self.player_odd_ls = [x.odd for x in self.player_in_mall]
+            # self.player_Bernoulli_p_ls = [x.Bernoulli_p for x in self.player_in_mall]
         #    self.updated = False # Set this false for going to the next interval.
             return None
 
         elif self.updated:      # Allow players' betting only when their corresponding mall makes its state updated at last interval.
             self.updated = False  # Set this false for waiting the house's action later.
             self.interval = self.interval + 1
-            self.player_action_ls = [x.action for x in self.player_in_mall]  # player_in_mall.action
+            # self.player_action_ls = [x.action for x in self.player_in_mall]  # player_in_mall.action
             self.player_bet_ls = [x.bet for x in self.player_in_mall]  # player_in_mall.bet
-            self.player_odd_ls = [x.odd for x in self.player_in_mall]  # player_in_mall.odd
-            self.player_Bernoulli_p_ls = [x.Bernoulli_p for x in self.player_in_mall]  # player_in_mall.Bernoulli_p
+            # self.player_odd_ls = [x.odd for x in self.player_in_mall]  # player_in_mall.odd
+            # self.player_Bernoulli_p_ls = [x.Bernoulli_p for x in self.player_in_mall]  # player_in_mall.Bernoulli_p
 
             return None
 
