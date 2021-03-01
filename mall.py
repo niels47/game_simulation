@@ -160,13 +160,13 @@ class Mall(object):
     def history_record(self):  # It always follows the updating movement if one want to record data.
         assert self.updated is True
         self.gain_record(False)
-        self.edge_record()
-        self.player_bet_record()
-        self.player_action_record()
-        self.manipulated_state_record()
-        self.player_odd_record()
-        self.externality_record()
-        self.player_Bernoulli_p_record()
+        self.edge_record(False)
+        self.player_bet_record(False)
+        self.player_action_record(False)
+        self.manipulated_state_record(False)
+        self.player_odd_record(False)
+        self.externality_record(False)
+        self.player_Bernoulli_p_record(False)
         return None
 
     def gain_record(self, switch=True):
