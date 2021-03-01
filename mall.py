@@ -169,50 +169,74 @@ class Mall(object):
         self.player_Bernoulli_p_record()
         return None
 
-    def gain_record(self):
-        if self.interval == (-1 or 0):
-            assert self.gain_history == []
-        self.gain_history.append(self.gain)
-        return None
+    def gain_record(self, switch=True):
+        if switch:
+            if self.interval == (-1 or 0):
+                assert self.gain_history == []
+            self.gain_history.append(self.gain)
+            return None
+        else:
+            pass
 
-    def edge_record(self):
-        if self.interval == (-1 or 0):
-            assert self.edge_history == []
-        self.edge_history.append(self.edge)
-        return None
+    def edge_record(self, switch=True):
+        if switch:
+            if self.interval == (-1 or 0):
+                assert self.edge_history == []
+            self.edge_history.append(self.edge)
+            return None
+        else:
+            pass
 
-    def player_Bernoulli_p_record(self):
-        if self.interval == (-1 or 0):
-            assert self.player_Bernoulli_p_history == []
-        self.player_Bernoulli_p_history.append(self.player_Bernoulli_p_ls)
-        return None
+    def player_Bernoulli_p_record(self, switch=True):
+        if switch:
+            if self.interval == (-1 or 0):
+                assert self.player_Bernoulli_p_history == []
+            self.player_Bernoulli_p_history.append(self.player_Bernoulli_p_ls)
+            return None
+        else:
+            pass
 
-    def player_odd_record(self):
-        if self.interval == (-1 or 0):
-            assert self.player_odd_history == []
-        self.player_odd_history.append(self.player_odd_ls)
-        return None
+    def player_odd_record(self, switch=True):
+        if switch:
+            if self.interval == (-1 or 0):
+                assert self.player_odd_history == []
+            self.player_odd_history.append(self.player_odd_ls)
+            return None
+        else:
+            pass
 
-    def player_action_record(self):
-        if self.interval == (-1 or 0):
-            assert self.player_action_history == []
-        self.player_action_history.append(self.player_action_ls)
-        return None
+    def player_action_record(self, switch=True):
+        if switch:
+            if self.interval == (-1 or 0):
+                assert self.player_action_history == []
+            self.player_action_history.append(self.player_action_ls)
+            return None
+        else:
+            pass
 
-    def player_bet_record(self):
-        if self.interval == (-1 or 0):
-            assert self.player_bet_history == []
-        self.player_bet_history.append(self.player_bet_ls)
-        return None
+    def player_bet_record(self, switch=True):
+        if switch:
+            if self.interval == (-1 or 0):
+                assert self.player_bet_history == []
+            self.player_bet_history.append(self.player_bet_ls)
+            return None
+        else:
+            pass
 
-    def manipulated_state_record(self):
-        if self.interval == (-1 or 0):
-            assert self.manipulated_history == []
-        self.manipulated_history.append(self.manipulated)
-        return None
+    def manipulated_state_record(self, switch=True):
+        if switch:
+            if self.interval == (-1 or 0):
+                assert self.manipulated_history == []
+            self.manipulated_history.append(self.manipulated)
+            return None
+        else:
+            pass
 
-    def externality_record(self):
-        if self.interval == (-1 or 0):
-            assert self.externality_history == []
-        self.externality_history.append(self.externality)
-        return None
+    def externality_record(self, switch=True):
+        if switch:
+            if self.interval == (-1 or 0):
+                assert self.externality_history == []
+            self.externality_history.append(self.externality)
+            return None
+        else:
+            pass
