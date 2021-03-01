@@ -94,9 +94,9 @@ class Mall(object):
             assert True is False
         if not self.updated:  # Prevent twice updates within an interval.
             self.volume = self.volume + sum(self.player_bet_ls)
-            self.cost = self.cost + sum([self.get_interval_cost_for_a_player(house_action, x) for x in self.player_in_mall])
+            # self.cost = self.cost + sum([self.get_interval_cost_for_a_player(house_action, x) for x in self.player_in_mall])
             self.profit = self.profit + sum([self.get_interval_utility_for_a_player(house_action, x) for x in self.player_in_mall])
-            self.gain = self.profit/self.cost
+            # self.gain = self.profit/self.cost
             self.edge = self.profit/self.volume
             self.RTP = 1 - self.edge
             self.updated = True
@@ -159,7 +159,7 @@ class Mall(object):
 
     def history_record(self):  # It always follows the updating movement if one want to record data.
         assert self.updated is True
-        self.gain_record()
+        self.gain_record(False)
         self.edge_record()
         self.player_bet_record()
         self.player_action_record()
