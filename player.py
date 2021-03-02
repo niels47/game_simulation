@@ -18,7 +18,7 @@ class Player(object):
         self.Bernoulli_p = Fraction(self.n_microstate, self.n_action)
 
         self.odd = self.Bernoulli_p**(-1)*self.scale_value
-        self.bet = np.random.uniform(1, 30000)
+        self.bet = np.random.randint(1, 30001)
         self.action = set(np.random.choice(self.n_action, self.n_microstate, replace=False))  # if self.n_microstate > 0 else set(np.random.randint(self.n_action, size=1))
 
     def __repr__(self):
