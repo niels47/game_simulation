@@ -1,4 +1,3 @@
-from fractions import Fraction
 import numpy as np
 
 
@@ -10,12 +9,20 @@ class Player(object):
     def __init__(self, n_action):
         self.n_action = n_action
         self.scale_value = scale_ls[np.random.randint(len(scale_ls))]
-        self.microstate_ls = [1, n_action//2, n_action//4, n_action//3, n_action//10]
+        self.microstate_ls = [
+            1, n_action//2, n_action//4,
+            n_action//3, n_action//10
+        ]
         self.n_microstate = np.random.choice(self.microstate_ls)
         while self.n_microstate == 0:  # Force it to pick an integer larget than zero
             self.n_microstate = np.random.choice(self.microstate_ls)
 
-        self.Bernoulli_p = Fraction(self.n_microstate, self.n_action)
+        self.Bernoulli_p = np.float64(self.n_microstate/self.n_action)
+        """
+        np.float64 inherits from the built-in float in python
+        https://numpy.org/doc/stable/user/basics.types.html
+        https://numpy.org/doc/stable/reference/arrays.scalars.html#built-in-scalar-types
+        """
 
         self.odd = self.Bernoulli_p**(-1)*self.scale_value
         self.bet = np.random.randint(1, 30001)
