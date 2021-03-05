@@ -11,6 +11,7 @@ class Mall(object):
         self.player_odd_ls = None
         self.player_Bernoulli_p_ls = None
         self.n_players = None
+        self.player_all_action_set = set()
 
         self.updated = False  # Indicate the mall receives the house's action then updates its profit, edge, etc.
         self.interval = -1  # Note the interval 0 as the first interval for receiving betting.
@@ -99,6 +100,7 @@ class Mall(object):
             # self.gain = self.profit/self.cost
             self.edge = self.profit/self.volume
             self.RTP = 1 - self.edge
+            self.player_all_action_set = set()  # Need clear out before the next interval.
             self.updated = True
             # self.update_externality(house_action, house_random_action, self.player_in_mall)
             return None
@@ -128,9 +130,12 @@ class Mall(object):
             self.interval = self.interval + 1  # Note the interval will go to next only if the method player_betting executed
             # self.player_action_ls = [x.action for x in self.player_in_mall]
             self.player_bet_ls = [x.bet for x in self.player_in_mall]
+
+            for p in self.player_in_mall:
+                self.player_all_action_set = self.player_all_action_set.union(p.action)
             # self.player_odd_ls = [x.odd for x in self.player_in_mall]
             # self.player_Bernoulli_p_ls = [x.Bernoulli_p for x in self.player_in_mall]
-        #    self.updated = False # Set this false for going to the next interval.
+            #    self.updated = False # Set this false for going to the next interval.
             return None
 
         elif self.updated:      # Allow players' betting only when their corresponding mall makes its state updated at last interval.
@@ -138,6 +143,9 @@ class Mall(object):
             self.interval = self.interval + 1
             # self.player_action_ls = [x.action for x in self.player_in_mall]  # player_in_mall.action
             self.player_bet_ls = [x.bet for x in self.player_in_mall]  # player_in_mall.bet
+
+            for p in self.player_in_mall:
+                self.player_all_action_set = self.player_all_action_set.union(p.action)
             # self.player_odd_ls = [x.odd for x in self.player_in_mall]  # player_in_mall.odd
             # self.player_Bernoulli_p_ls = [x.Bernoulli_p for x in self.player_in_mall]  # player_in_mall.Bernoulli_p
 
