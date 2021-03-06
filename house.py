@@ -3,8 +3,21 @@ import numpy as np
 
 class House(object):
 
-    def __init__(self, n_action, external_interval=None):
+    def __init__(self, n_action, external_interval=None, n_sampled=None):
         self.n_action = n_action
+
+        self.sampled_action_state = None  # To define the state of whether sampling from total actions.
+        if n_sampled:
+            if n_sampled < self.n_action:
+                self.handling_action_array = np.random.choice(self.n_action, n_sampled, replace=False)
+                self.sampled_action_state = True
+            elif n_sampled == self.n_action:
+                self.handling_action_array = np.arange(n_action)
+                self.sampled_action_state = False
+        else:
+            self.handling_action_array = np.arange(n_action)
+            self.sampled_action_state = False
+
         self.external_interval = external_interval
         self.random_action = None
         self.action = None
@@ -44,7 +57,7 @@ class House(object):
         pre_calc_mall_interval_utility_multiple_ls = []  # Collect virtual interval profits of malls.
         for x in mall_ls:
             assert x.updated is False  # Because this class method invloves a pre-calculation a prior.
-            pre_calc_mall_interval_utility_multiple_ls.append([x.get_interval_utility(j) for j in range(self.n_action)])
+            pre_calc_mall_interval_utility_multiple_ls.append([x.get_interval_utility(j) for j in self.handling_action_array])
 
         pre_calc_itv_util = pre_calc_mall_interval_utility_multiple_ls
         return pre_calc_itv_util
@@ -56,7 +69,7 @@ class House(object):
         pre_calc_mall_edge_ls = []  # Collect virtual interval profits of malls.
         for x in mall_ls:
             assert x.updated is False  # Because this class method invloves a pre-calculation a prior.
-            pre_calc_mall_edge_ls.append([(x.profit+x.get_interval_utility(j))/(x.volume + sum(x.player_bet_ls)) for j in range(self.n_action)])
+            pre_calc_mall_edge_ls.append([(x.profit+x.get_interval_utility(j))/(x.volume + sum(x.player_bet_ls)) for j in self.handling_action_array])
         pre_calc_mall_edge = pre_calc_mall_edge_ls
         return pre_calc_mall_edge
 
@@ -108,7 +121,7 @@ class House(object):
                         x.edge,
                         (x.profit+x.get_interval_utility(i))/(x.volume + sum(x.player_bet_ls))
                     )
-                    else x.get_interval_utility(i) for i in range(self.n_action)
+                    else x.get_interval_utility(i) for i in self.handling_action_array
                 ]
                 )  # Use np.nan to replace 0. In the case of [0,0,-1], np.argmax will always pick the position 0.
 
@@ -136,6 +149,10 @@ class House(object):
                 # chosen_action = np.nanargmax(result_narray)
                 #     print("House needs to involve...")
                 chosen_action_ls = list(np.argwhere(result_narray == np.nanmax(result_narray)).flatten())
+                #  For debug
+                print(chosen_action_ls)
+                #  End here.
+
                 if len(chosen_action_ls) > 1:
                     #    print("tie breaking...")
                     chosen_action = self.tie_breaking(chosen_action_ls)
@@ -187,14 +204,14 @@ class House(object):
                     else np.nan if x.get_interval_utility(i) > 0
                     else abs(x.get_interval_utility(i))*P
                     if abs(x.get_interval_utility(i)) <= x.volume*(x.edge - target_edge_upper_bound)*Q
-                    else x.get_interval_utility(i) for i in range(self.n_action)
+                    else x.get_interval_utility(i) for i in self.handling_action_array
                 ]
                 )  # Use np.nan to replace 0. In the case of [0,0,-1], np.argmax will always pick the position 0.
                 #    In "x.get_interval_utility(i) <= x.volume*...", I let the equality hold since the manual did not mention this case.
 
                 #  # Do double check for itv_util_for_choosing from other logical judging. Below here;
                 #  test_for_itv_util_for_choosing = []
-                #  for i in range(self.n_action):
+                #  for i in self.handling_action_array:
                 #      tmp_u = x.get_interval_utility(i)
                 #      if condition(x.edge, (x.profit+tmp_u)/(x.volume + sum(x.player_bet_ls))):
                 #          if tmp_u > 0:
@@ -272,10 +289,10 @@ class House(object):
             for i, m in enumerate(mall_ls):
                 if m.edge > target_edge_upper_bound:
                     #    print(pre_calc_mall_edge[i])
-                    mall_with_candidated_num_set_ls.append((m, {j for j in range(self.n_action) if (m.get_interval_utility(j) <= 0 and pre_calc_mall_edge[i][j] >= target_edge_lower_bound)},))
+                    mall_with_candidated_num_set_ls.append((m, {act for j, act in enumerate(self.handling_action_array) if (m.get_interval_utility(act) <= 0 and pre_calc_mall_edge[i][j] >= target_edge_lower_bound)},))
                 elif m.edge < target_edge_lower_bound:
                     #    print(pre_calc_mall_edge[i])
-                    mall_with_candidated_num_set_ls.append((m, {j for j in range(self.n_action) if (m.get_interval_utility(j) >= 0 and pre_calc_mall_edge[i][j] <= target_edge_upper_bound)},))
+                    mall_with_candidated_num_set_ls.append((m, {act for j, act in enumerate(self.handling_action_array) if (m.get_interval_utility(act) >= 0 and pre_calc_mall_edge[i][j] <= target_edge_upper_bound)},))
             mall_with_candidated_num_set_ls.sort(key=lambda x: x[0].volume, reverse=True)
         #  print(mall_with_candidated_num_set_ls)
             candidated_num_set_ls = [x[1] for x in mall_with_candidated_num_set_ls]
@@ -285,7 +302,7 @@ class House(object):
                 for m in mall_ls:
                     m.check_manipulation(False)
             else:
-                tmp = {i for i in range(self.n_action)}
+                tmp = {i for i in self.handling_action_array}
                 tmp_bak = set()
                 for s in candidated_num_set_ls:
                     if s:
@@ -295,6 +312,11 @@ class House(object):
                             tmp = tmp_bak
                             break
                 chosen_action_ls = list(tmp)
+
+                # For debug
+                # print(chosen_action_ls)
+                # End here.
+
                 if len(chosen_action_ls) > 1:
                     #  print("Manipulated. Tie breaking...")
                     chosen_action = self.tie_breaking(chosen_action_ls)
@@ -330,10 +352,10 @@ class House(object):
             for i, m in enumerate(mall_ls):
                 if m.edge > target_edge_upper_bound:
                     #    print(pre_calc_mall_edge[i])
-                    mall_with_candidated_num_set_ls.append((m, {j for j in range(self.n_action) if (m.get_interval_utility(j) <= 0 and pre_calc_mall_edge[i][j] >= target_edge_lower_bound)},))
+                    mall_with_candidated_num_set_ls.append((m, {act for j, act in enumerate(self.handling_action_array) if (m.get_interval_utility(act) <= 0 and pre_calc_mall_edge[i][j] >= target_edge_lower_bound)},))
                 elif m.edge < target_edge_lower_bound:
                     #    print(pre_calc_mall_edge[i])
-                    mall_with_candidated_num_set_ls.append((m, {j for j in range(self.n_action) if (m.get_interval_utility(j) >= 0 and pre_calc_mall_edge[i][j] <= target_edge_upper_bound)},))
+                    mall_with_candidated_num_set_ls.append((m, {act for j, act in enumerate(self.handling_action_array) if (m.get_interval_utility(act) >= 0 and pre_calc_mall_edge[i][j] <= target_edge_upper_bound)},))
             mall_with_candidated_num_set_ls.sort(key=lambda x: x[0].volume, reverse=True)
             #  print(mall_with_candidated_num_set_ls)
             candidated_num_set_ls = [x[1] for x in mall_with_candidated_num_set_ls]
@@ -343,7 +365,7 @@ class House(object):
                 for m in mall_ls:
                     m.check_manipulation(False)
             else:
-                tmp = {i for i in range(self.n_action)}
+                tmp = {i for i in self.handling_action_array}
                 tmp_bak = set()
                 for s in candidated_num_set_ls:
                     if s:
